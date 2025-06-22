@@ -1,0 +1,15 @@
+<div>
+  <label for="nama_fakultas" class="block text-sm font-medium text-slate-700">Nama Fakultas</label>
+  <input
+    type="text"
+    id="nama_fakultas"
+    name="nama_fakultas"
+    value="{{ old('nama_fakultas', fakultas?.namaFakultas || '') }}"
+    class="mt-1 block w-full rounded-md shadow-sm"
+  />
+  @if(flashMessages.has('errors.nama_fakultas'))
+    <p class="text-red-500 text-xs mt-1">
+      {{ flashMessages.get('errors.nama_fakultas') }}
+    </p>
+  @endif
+</div>

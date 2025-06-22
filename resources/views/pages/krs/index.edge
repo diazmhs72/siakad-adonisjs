@@ -1,0 +1,170 @@
+@layout('layouts/app', { title: 'Pengisian KRS' })
+  @section('body')
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-slate-800">
+        Pengisian & Edit KRS
+      </h2>
+      <p class="text-slate-500">
+        Pilih mahasiswa dan semester untuk memulai.
+      </p>
+    </div>
+
+    <!-- Kontrol Utama -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-white rounded-lg shadow">
+      <div>
+        <label for="mahasiswa-select" class="block text-sm font-medium text-slate-700">Pilih Mahasiswa</label>
+        <select id="mahasiswa-select" class="mt-1 block w-full rounded-md shadow-sm">
+          <option value="">
+            -- Pilih Mahasiswa --
+          </option>
+          @each(mhs in mahasiswa_list)
+            <option value="{{ mhs.id }}">
+              {{ mhs.nim }} - {{ mhs.nama }}
+            </option>
+          @end
+        </select>
+      </div>
+      <div>
+        <label for="semester-input" class="block text-sm font-medium text-slate-700">Semester</label>
+        <input
+          type="number"
+          id="semester-input"
+          class="mt-1 block w-full rounded-md shadow-sm"
+          placeholder="Masukkan semester aktif"
+        />
+      </div>
+    </div>
+
+    <div id="krs-content" class="hidden">
+      <form action="{{ route('krs.store') }}" method="POST">
+        {{ csrfField() }}
+    <input type="hidden" name="mahasiswa_id" id="form-mahasiswa-id" />
+        <input type="hidden" name="semester" id="form-semester" />
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Kolom Kiri: Matakuliah Tersedia -->
+          <div>
+            <div class="bg-white shadow-lg rounded-lg">
+              <div class="p-6 border-b flex justify-between">
+                <h3 class="text-lg font-semibold">
+                  Pilih Matakuliah Tersedia
+                </h3>
+                <button
+                  type="submit"
+                  class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-indigo-700"
+                >Tambahkan Pilihan</button>
+              </div>
+              <div id="matakuliah-list" class="p-6 space-y-4 max-h-96 overflow-y-auto">
+                <!-- Konten diisi oleh JavaScript -->
+                <p class="text-center text-slate-500">
+                  Pilih mahasiswa dan semester untuk melihat matakuliah.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Kolom Kanan: KRS Semester Ini -->
+          <div>
+            <div class="bg-white shadow-lg rounded-lg">
+              <div class="p-6 border-b flex justify-between items-center">
+                <h3 class="text-lg font-semibold">
+                  KRS Semester <span id="krs-semester-display"></span>
+                </h3>
+                <span id="total-sks" class="px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">Total: 0 SKS</span>
+              </div>
+              <div class="max-h-96 overflow-y-auto">
+                <table class="w-full text-sm text-left">
+                  <tbody id="current-krs-list">
+                    <!-- Konten diisi oleh JavaScript -->
+                    <tr>
+                      <td class="text-center text-slate-500 p-6">
+                        KRS untuk semester ini masih kosong.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const mahasiswaSelect = document.getElementById("mahasiswa-select");
+        const semesterInput = document.getElementById("semester-input");
+        const krsContent = document.getElementById("krs-content");
+        const matakuliahListContainer = document.getElementById("matakuliah-list");
+        const currentKrsListContainer = document.getElementById("current-krs-list");
+        const totalSksEl = document.getElementById("total-sks");
+        const krsSemesterDisplay = document.getElementById("krs-semester-display");
+        const formMahasiswaId = document.getElementById("form-mahasiswa-id");
+        const formSemester = document.getElementById("form-semester");
+        async function fetchData() {
+          const mahasiswaId = mahasiswaSelect.value;
+          const semester = semesterInput.value;
+          if (!mahasiswaId || !semester) {
+            krsContent.classList.add("hidden");
+            return;
+          }
+          krsContent.classList.remove("hidden");
+          formMahasiswaId.value = mahasiswaId;
+          formSemester.value = semester;
+          krsSemesterDisplay.textContent = semester;
+          try {
+            const response = await fetch(`{{ route('api.krs.getMatakuliah') }}?mahasiswaId=${mahasiswaId}&semester=${semester}`);
+            if (!response.ok) throw new Error("Network response was not ok");
+            const data = await response.json();
+            // Render matakuliah tersedia
+            matakuliahListContainer.innerHTML = "";
+            if (data.matakuliahs.length > 0) {
+              data.matakuliahs.forEach(mk => {
+                matakuliahListContainer.innerHTML += `
+                                                <label for="mk-${mk.id}" class="flex items-center p-3 rounded-lg hover:bg-slate-50 cursor-pointer">
+                                                    <input id="mk-${mk.id}" type="checkbox" name="selectedMatakuliahs[]" value="${mk.id}" class="h-4 w-4 text-indigo-600 rounded">
+                                                    <span class="ms-3 text-sm">
+                                                        <p class="font-semibold text-slate-800">${mk.nama_matakuliah}</p>
+                                                        <p class="text-slate-500">${mk.kode} - ${mk.sks} SKS</p>
+                                                    </span>
+                                                </label>
+                                            `;
+              });
+            } else {
+              matakuliahListContainer.innerHTML = '<p class="text-center text-slate-500 py-4">Tidak ada matakuliah tersedia.</p>';
+            }
+            // Render KRS saat ini
+            currentKrsListContainer.innerHTML = "";
+            let totalSks = 0;
+            if (data.currentKrs.length > 0) {
+              data.currentKrs.forEach(krs => {
+                totalSks += krs.matakuliah.sks;
+                currentKrsListContainer.innerHTML += `
+                                                <tr class="border-b">
+                                                    <td class="px-6 py-4">
+                                                        <p class="font-semibold">${krs.matakuliah.nama_matakuliah}</p>
+                                                        <p class="text-slate-500">${krs.matakuliah.kode}</p>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-center">${krs.matakuliah.sks} SKS</td>
+                                                    <td class="px-6 py-4 text-right">
+                                                        <form action="/krs/${krs.id}?_method=DELETE" method="POST" onsubmit="return confirm('Yakin ingin hapus?')">
+                                                            {{ csrfField() }}
+                                                            <button type="submit" class="text-red-500 hover:text-red-700 font-semibold">&times; Hapus</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            `;
+              });
+            } else {
+              currentKrsListContainer.innerHTML = '<tr><td class="text-center text-slate-500 p-6">KRS kosong.</td></tr>';
+            }
+            totalSksEl.textContent = `Total: ${totalSks} SKS`;
+          } catch (error) {
+            console.error("Fetch error:", error);
+            matakuliahListContainer.innerHTML = '<p class="text-center text-red-500">Gagal memuat data.</p>';
+          }
+        }
+        mahasiswaSelect.addEventListener("change", fetchData);
+        semesterInput.addEventListener("change", fetchData);
+      });
+    </script>
+  @endsection

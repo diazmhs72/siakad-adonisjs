@@ -1,0 +1,61 @@
+@layout('layouts/app', { title: 'Manajemen Fakultas' })
+  @section('body')
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-slate-800">
+        Manajemen Fakultas
+      </h2>
+      <a
+        href="{{ route('fakultas.create') }}"
+        class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700"
+      >
+        Tambah Fakultas
+      </a>
+    </div>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+          <tr>
+            <th class="px-6 py-3">
+              ID
+            </th>
+            <th class="px-6 py-3">
+              Nama Fakultas
+            </th>
+            <th class="px-6 py-3 text-right">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @each(fakultas in fakultas_list)
+            <tr class="border-b">
+              <td class="px-6 py-4">
+                {{ fakultas.id }}
+              </td>
+              <td class="px-6 py-4 font-medium">
+                {{ fakultas.namaFakultas }}
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a
+                  href="{{ route('fakultas.edit', { id: fakultas.id }) }}"
+                  class="font-medium text-indigo-600 hover:underline"
+                >Edit</a>
+                <form
+                  action="{{ route('fakultas.destroy', { id: fakultas.id }) }}?_method=DELETE"
+                  method="POST"
+                  class="inline"
+                >
+                  {{ csrfField() }}
+                <button
+                    type="submit"
+                    onclick="return confirm('Anda yakin?')"
+                    class="font-medium text-red-600 hover:underline"
+                  >Hapus</button>
+                </form>
+              </td>
+            </tr>
+          @end
+        </tbody>
+      </table>
+    </div>
+  @endsection

@@ -1,0 +1,76 @@
+@layout('layouts/app', { title: 'Manajemen Matakuliah' })
+  @section('body')
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-slate-800">
+        Manajemen Matakuliah
+      </h2>
+      <a
+        href="{{ route('matakuliah.create') }}"
+        class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg"
+      >Tambah Matakuliah</a>
+    </div>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+          <tr>
+            <th class="px-6 py-3">
+              Kode
+            </th>
+            <th class="px-6 py-3">
+              Nama Matakuliah
+            </th>
+            <th class="px-6 py-3">
+              Prodi
+            </th>
+            <th class="px-6 py-3">
+              SKS
+            </th>
+            <th class="px-6 py-3">
+              Semester
+            </th>
+            <th class="px-6 py-3 text-right">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @each(mk in matakuliah_list)
+            <tr class="border-b">
+              <td class="px-6 py-4 font-mono text-indigo-600">
+                {{ mk.kode }}
+              </td>
+              <td class="px-6 py-4 font-medium">
+                {{ mk.namaMatakuliah }}
+              </td>
+              <td class="px-6 py-4">
+                {{ mk.prodi.namaProdi }}
+              </td>
+              <td class="px-6 py-4">
+                {{ mk.sks }}
+              </td>
+              <td class="px-6 py-4">
+                {{ mk.semesterMatakuliah }}
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a href="{{ route('matakuliah.edit', { id: mk.id }) }}" class="font-medium text-indigo-600">Edit</a>
+                <form
+                  action="{{ route('matakuliah.destroy', { id: mk.id }) }}?_method=DELETE"
+                  method="POST"
+                  class="inline"
+                >
+                  {{ csrfField() }}
+                <button type="submit" onclick="return confirm('Anda yakin?')" class="font-medium text-red-600">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          @else
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                Tidak ada data.
+              </td>
+            </tr>
+          @end
+        </tbody>
+      </table>
+    </div>
+  @endsection

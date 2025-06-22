@@ -1,0 +1,64 @@
+@layout('layouts/app', { title: 'Manajemen Prodi' })
+  @section('body')
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-slate-800">
+        Manajemen Prodi
+      </h2>
+      <a
+        href="{{ route('prodi.create') }}"
+        class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg"
+      >Tambah Prodi</a>
+    </div>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+          <tr>
+            <th class="px-6 py-3">
+              Kode Prodi
+            </th>
+            <th class="px-6 py-3">
+              Nama Prodi
+            </th>
+            <th class="px-6 py-3">
+              Fakultas
+            </th>
+            <th class="px-6 py-3 text-right">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @each(prodi in prodi_list)
+            <tr class="border-b">
+              <td class="px-6 py-4 font-mono text-indigo-600">
+                {{ prodi.id }}
+              </td>
+              <td class="px-6 py-4 font-medium">
+                {{ prodi.namaProdi }}
+              </td>
+              <td class="px-6 py-4">
+                {{ prodi.fakultas.namaFakultas }}
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a href="{{ route('prodi.edit', { id: prodi.id }) }}" class="font-medium text-indigo-600">Edit</a>
+                <form
+                  action="{{ route('prodi.destroy', { id: prodi.id }) }}?_method=DELETE"
+                  method="POST"
+                  class="inline"
+                >
+                  {{ csrfField() }}
+                <button type="submit" onclick="return confirm('Anda yakin?')" class="font-medium text-red-600">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          @else
+            <tr>
+              <td colspan="4" class="text-center p-4">
+                Tidak ada data.
+              </td>
+            </tr>
+          @end
+        </tbody>
+      </table>
+    </div>
+  @endsection

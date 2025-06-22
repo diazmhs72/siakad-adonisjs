@@ -1,0 +1,15 @@
+@layout('layouts/app', { title: 'Edit Mahasiswa' })
+  @section('body')
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">
+      Edit Mahasiswa
+    </h2>
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-xl">
+      <form action="{{ route('mahasiswa.update', { id: mahasiswa.id }) }}?_method=PUT" method="POST">
+        {{ csrfField() }}
+        @include('pages/mahasiswa/form', { mahasiswa: mahasiswa, prodi_list: prodi_list, isEditMode: true })
+        <div class="mt-6">
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md">Update</button>
+        </div>
+      </form>
+    </div>
+  @endsection

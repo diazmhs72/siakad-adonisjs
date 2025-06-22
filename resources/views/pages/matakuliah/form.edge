@@ -1,0 +1,70 @@
+<div class="space-y-4">
+  <div>
+    <label for="prodi_id" class="block text-sm font-medium text-slate-700">Program Studi</label>
+    <select
+      name="prodi_id"
+      id="prodi_id"
+      class="mt-1 block w-full rounded-md {{ isEditMode ? 'bg-slate-200' : '' }}"
+      {{ isEditMode ? 'disabled' : '' }}
+    >
+      <option value="">
+        -- Pilih Prodi --
+      </option>
+      @each(prodi in prodis)
+        <option value="{{ prodi.id }}" {{ matakuliah?.prodiId == prodi.id ? 'selected' : '' }}>
+          {{ prodi.namaProdi }}
+        </option>
+      @end
+    </select>
+    @if(flashMessages.has('errors.prodi_id'))
+      <p class="text-red-500 text-xs mt-1">
+        {{ flashMessages.get('errors.prodi_id') }}
+      </p>
+    @endif
+  </div>
+  <div>
+    <label for="semester_matakuliah" class="block text-sm font-medium text-slate-700">Semester Target</label>
+    <input
+      type="number"
+      name="semester_matakuliah"
+      value="{{ old('semester_matakuliah', matakuliah?.semesterMatakuliah || '') }}"
+      class="mt-1 block w-full rounded-md {{ isEditMode ? 'bg-slate-200' : '' }}"
+      {{ isEditMode ? 'disabled' : '' }}
+    />
+    @if(flashMessages.has('errors.semester_matakuliah'))
+      <p class="text-red-500 text-xs mt-1">
+        {{ flashMessages.get('errors.semester_matakuliah') }}
+      </p>
+    @endif
+  </div>
+  <div>
+    <label for="nama_matakuliah" class="block text-sm font-medium text-slate-700">Nama Matakuliah</label>
+    <input
+      type="text"
+      name="nama_matakuliah"
+      value="{{ old('nama_matakuliah', matakuliah?.namaMatakuliah || '') }}"
+      required
+      class="mt-1 block w-full rounded-md"
+    />
+    @if(flashMessages.has('errors.nama_matakuliah'))
+      <p class="text-red-500 text-xs mt-1">
+        {{ flashMessages.get('errors.nama_matakuliah') }}
+      </p>
+    @endif
+  </div>
+  <div>
+    <label for="sks" class="block text-sm font-medium text-slate-700">SKS</label>
+    <input
+      type="number"
+      name="sks"
+      value="{{ old('sks', matakuliah?.sks || '') }}"
+      required
+      class="mt-1 block w-full rounded-md"
+    />
+    @if(flashMessages.has('errors.sks'))
+      <p class="text-red-500 text-xs mt-1">
+        {{ flashMessages.get('errors.sks') }}
+      </p>
+    @endif
+  </div>
+</div>

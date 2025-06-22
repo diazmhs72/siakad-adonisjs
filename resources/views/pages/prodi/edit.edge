@@ -1,0 +1,15 @@
+@layout('layouts/app', { title: 'Edit Prodi' })
+  @section('body')
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">
+      Edit Prodi
+    </h2>
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-xl">
+      <form action="{{ route('prodi.update', { id: prodi.id }) }}?_method=PUT" method="POST">
+        {{ csrfField() }}
+        @include('pages/prodi/form', { prodi: prodi, fakultas_list: fakultas_list, isEditMode: true })
+        <div class="mt-6">
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md">Update</button>
+        </div>
+      </form>
+    </div>
+  @endsection

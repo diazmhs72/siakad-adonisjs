@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {{ title || 'SIAKAD AdonisJS' }}
+    </title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  </head>
+  <body class="font-sans antialiased">
+    <div class="min-h-screen bg-slate-50 dark:bg-slate-900">
+
+      @include('partials/navbar')
+
+      <!-- Page Content -->
+      <main class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          @include('partials/notification')
+          @!section('body')
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

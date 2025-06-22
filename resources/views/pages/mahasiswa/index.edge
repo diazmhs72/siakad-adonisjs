@@ -1,0 +1,105 @@
+@layout('layouts/app', { title: 'Manajemen Mahasiswa' })
+  @section('body')
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-slate-800">
+        Daftar Mahasiswa
+      </h2>
+      <a
+        href="{{ route('mahasiswa.create') }}"
+        class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg"
+      >Tambah Mahasiswa</a>
+    </div>
+
+    <!-- Filter -->
+    <div class="mb-4 p-4 bg-white rounded-lg shadow">
+      <form action="{{ route('mahasiswa.index') }}" method="GET">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="fakultas" class="block text-sm font-medium">Fakultas</label>
+            <select name="fakultas" id="fakultas" class="mt-1 block w-full rounded-md">
+              <option value="">
+                Semua Fakultas
+              </option>
+              @each(fak in fakultas_list)
+                <option value="{{ fak.id }}" {{ request.input('fakultas') == fak.id ? 'selected' : '' }}>
+                  {{ fak.namaFakultas }}
+                </option>
+              @end
+            </select>
+          </div>
+          <div>
+            <label for="semester" class="block text-sm font-medium">Semester</label>
+            <input
+              type="number"
+              name="semester"
+              value="{{ request.input('semester', '') }}"
+              class="mt-1 block w-full rounded-md"
+              placeholder="Cari Semester..."
+            />
+          </div>
+          <div class="self-end">
+            <button type="submit" class="px-4 py-2 bg-slate-600 text-white rounded-md">Filter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+          <tr>
+            <th class="px-6 py-3">
+              NIM
+            </th>
+            <th class="px-6 py-3">
+              Nama
+            </th>
+            <th class="px-6 py-3">
+              Prodi
+            </th>
+            <th class="px-6 py-3">
+              Total SKS
+            </th>
+            <th class="px-6 py-3 text-right">
+              Aksi
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @each(mhs in mahasiswa_list)
+            <tr class="border-b">
+              <td class="px-6 py-4">
+                {{ mhs.nim }}
+              </td>
+              <td class="px-6 py-4 font-medium">
+                {{ mhs.nama }}
+              </td>
+              <td class="px-6 py-4">
+                {{ mhs.prodi.namaProdi }}
+              </td>
+              <td class="px-6 py-4">
+                {{ mhs.totalSks }}
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a href="{{ route('mahasiswa.edit', { id: mhs.id }) }}" class="font-medium text-indigo-600">Edit</a>
+                <form
+                  action="{{ route('mahasiswa.destroy', { id: mhs.id }) }}?_method=DELETE"
+                  method="POST"
+                  class="inline"
+                >
+                  {{ csrfField() }}
+                <button type="submit" onclick="return confirm('Anda yakin?')" class="font-medium text-red-600">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          @else
+            <tr>
+              <td colspan="5" class="text-center p-4">
+                Tidak ada data.
+              </td>
+            </tr>
+          @end
+        </tbody>
+      </table>
+    </div>
+  @endsection

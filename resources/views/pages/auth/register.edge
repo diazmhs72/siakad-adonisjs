@@ -1,0 +1,66 @@
+@layout('layouts/guest', { title: 'Register' })
+  @section('body')
+    <form action="{{ route('auth.register') }}" method="POST">
+      {{ csrfField() }}
+      <!-- Nama Lengkap -->
+      <div>
+        <label for="fullName" class="block text-sm font-medium">Nama Lengkap</label>
+        <input
+          type="text"
+          id="fullName"
+          name="fullName"
+          value="{{ old('fullName', '') }}"
+          class="mt-1 block w-full rounded-md shadow-sm"
+        />
+        @if(flashMessages.has('errors.fullName'))
+          <p class="text-red-500 text-xs mt-1">
+            {{ flashMessages.get('errors.fullName') }}
+          </p>
+        @endif
+      </div>
+      <!-- Email -->
+      <div class="mt-4">
+        <label for="email" class="block text-sm font-medium">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value="{{ old('email', '') }}"
+          class="mt-1 block w-full rounded-md shadow-sm"
+        />
+        @if(flashMessages.has('errors.email'))
+          <p class="text-red-500 text-xs mt-1">
+            {{ flashMessages.get('errors.email') }}
+          </p>
+        @endif
+      </div>
+      <!-- Password -->
+      <div class="mt-4">
+        <label for="password" class="block text-sm font-medium">Password</label>
+        <input type="password" id="password" name="password" class="mt-1 block w-full rounded-md shadow-sm" />
+        @if(flashMessages.has('errors.password'))
+          <p class="text-red-500 text-xs mt-1">
+            {{ flashMessages.get('errors.password') }}
+          </p>
+        @endif
+      </div>
+      <!-- Konfirmasi Password -->
+      <div class="mt-4">
+        <label for="password_confirmation" class="block text-sm font-medium">Konfirmasi Password</label>
+        <input
+          type="password"
+          id="password_confirmation"
+          name="password_confirmation"
+          class="mt-1 block w-full rounded-md shadow-sm"
+        />
+      </div>
+      <div class="mt-6">
+        <button type="submit" class="w-full justify-center px-4 py-2 bg-indigo-600 text-white rounded-md">Register</button>
+      </div>
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          Sudah punya akun? <a class="underline text-indigo-600" href="{{ route('auth.showLogin') }}">Login di sini</a>
+        </p>
+      </div>
+    </form>
+  @endsection

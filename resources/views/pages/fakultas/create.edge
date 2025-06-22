@@ -1,0 +1,15 @@
+@layout('layouts/app', { title: 'Tambah Fakultas' })
+  @section('body')
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">
+      Tambah Fakultas Baru
+    </h2>
+    <div class="bg-white shadow-lg rounded-lg p-6 max-w-xl">
+      <form action="{{ route('fakultas.store') }}" method="POST">
+        {{ csrfField() }}
+        @include('pages/fakultas/form')
+        <div class="mt-6">
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md">Simpan</button>
+        </div>
+      </form>
+    </div>
+  @endsection
